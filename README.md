@@ -20,4 +20,4 @@ pip install pygame
 ## Troubleshooting
 
 - If an error occurs (e.g. no solution is found or nodes were not placed on the grid):
-  - Clear the grid fully using the red button before running the program again.
+  - Clear the grid fully using the red button before running the program again. (If this is not done the program may not run if you click the start button)
