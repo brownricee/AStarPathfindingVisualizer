@@ -21,3 +21,10 @@ pip install pygame
 
 - If an error occurs (e.g. no solution is found or nodes were not placed on the grid):
   - Clear the grid fully using the red button before running the program again. (If this is not done the program may not run if you click the start button)
+
+
+## Acknowledgements
+
+This project was created independently, but I referred to some online resources for guidance to better understand underlying concepts:
+- [A* Algorithm Pseudocode.](https://robotics.caltech.edu/wiki/images/e/e0/Astar.pdf)
+- [YouTube Video](https://www.youtube.com/watch?v=W9zSr9jnoqY&list=PLWF9TXck7O_zsqnufs62t26_LJnLo4VRA&index=5) by Learning Orbis.
