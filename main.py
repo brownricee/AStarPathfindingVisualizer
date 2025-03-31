@@ -1,6 +1,7 @@
 import pygame, sys
 import tkinter as tk
 from tkinter import messagebox
+import button
 
 pygame.init()
 
@@ -21,33 +22,7 @@ preset_maze_img = pygame.image.load('graphics/presetbutton.png').convert_alpha()
 
 menu_state = "main"
 
-class Button:
-    def __init__(self, x, y, image, scale):
-        # This will be used to scale an image in case it's too big.
-        width = image.get_width()
-        height = image.get_height()
-        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.clicked = False
-    def draw(self):
-        # Getting the position of the mouse cursor to detect if it's clicked the button
-        pos = pygame.mouse.get_pos()
-        action = False
-        if self.rect.collidepoint(pos):
-            # Self.clicked == false is used to make sure the button doesn't trigger multiple times 
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
-                action = True
-            if pygame.mouse.get_pressed()[0] == 0:
-               self.clicked = False
-        screen.blit(self.image, (self.rect.x, self.rect.y))
-        return action
 
-def show_error_window(message):
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Error", message)
 
 class Grid:
     def __init__(self, layout):
@@ -111,7 +86,7 @@ class AStarSearch(Grid):
         if self.startingNodeCoordinates == self.endNodeCoordinates:
             return
         elif self.startingNodeCoordinates == None or self.endNodeCoordinates == None:
-            show_error_window("You did not place a start/end node on the grid.")
+            button.show_error_window("You did not place a start/end node on the grid.")
             return
         while len(self.nodesToSearch) != 0:
             smallest_f_cost = 99999
@@ -175,7 +150,7 @@ class AStarSearch(Grid):
                     self.nodesToSearch.append(left_node)
                     parents[left_node] = smallest_node
         if not solved:
-            show_error_window("No solution to the maze.")
+            button.show_error_window("No solution to the maze.")
                
 
 def draw_text(text, font, text_colour, x, y):
@@ -187,8 +162,8 @@ def draw_text(text, font, text_colour, x, y):
 def main_menu():
     global menu_state
     run = True
-    start_button = Button(SCREEN_WIDTH // 2, 325, start_img, 0.97)
-    tutorial_button = Button(SCREEN_WIDTH // 2, 450, tutorial_img, 0.97)
+    start_button = button.Button(SCREEN_WIDTH // 2, 325, start_img, 0.97)
+    tutorial_button = button.Button(SCREEN_WIDTH // 2, 450, tutorial_img, 0.97)
     while run:
         screen.fill('#f4f4f9')
         draw_text("A* Pathfinding Visualizer", font, text_col, SCREEN_WIDTH // 2, 100)
@@ -196,9 +171,9 @@ def main_menu():
         if menu_state == "main":
             # Draws the buttons on the main screen.
             pygame.display.set_caption("Main Menu")
-            if start_button.draw():
+            if start_button.draw(screen):
                 menu_state = "visualizer"
-            if tutorial_button.draw():
+            if tutorial_button.draw(screen):
                 menu_state = "tutorial"
         if menu_state == "visualizer":
             visualizerPage()
@@ -244,27 +219,27 @@ action_executed = False
 def visualizerPage():
     global menu_state, nodes, action_executed
     pygame.display.set_caption("A* Pathfinding Visualizer")
-    exit_button = Button(150, 50, exit_img, 0.6)
-    start_maze = Button(225, SCREEN_HEIGHT - 50, start_maze_img, 0.6)
-    clear_maze = Button(500, SCREEN_HEIGHT - 50, clear_maze_img, 0.6)
-    preset_maze = Button(785, SCREEN_HEIGHT - 50, preset_maze_img, 0.6)
+    exit_button = button.Button(150, 50, exit_img, 0.6)
+    start_maze = button.Button(225, SCREEN_HEIGHT - 50, start_maze_img, 0.6)
+    clear_maze = button.Button(500, SCREEN_HEIGHT - 50, clear_maze_img, 0.6)
+    preset_maze = button.Button(785, SCREEN_HEIGHT - 50, preset_maze_img, 0.6)
     screen.fill("#f4f4f9")
     blockSize = 50
     drawGrid(blockSize, gridMaze)
-    if start_maze.draw():
+    if start_maze.draw(screen):
         if not action_executed:
             searchMaze = AStarSearch(gridMaze)
             searchMaze.search()
             action_executed = True
-    if exit_button.draw():
+    if exit_button.draw(screen):
         menu_state = "main"
-    if clear_maze.draw():
+    if clear_maze.draw(screen):
         for i in range(len(gridMaze)):
             for j in range(len(gridMaze[i])):
                 gridMaze[i][j] = ' '
                 nodes = ['S', 'X']
         action_executed = False
-    if preset_maze.draw():
+    if preset_maze.draw(screen):
         for i in range(len(gridMaze)):
             for j in range(len(gridMaze[i])):
                 gridMaze[i][j] = presetMaze[i][j]
@@ -336,7 +311,7 @@ def drawGrid(blockSize, gridMaze):
 def tutorialPage():
     global menu_state
     pygame.display.set_caption("Tutorial")
-    exit_button = Button(150, 50, exit_img, 0.6)
+    exit_button = button.Button(150, 50, exit_img, 0.6)
     screen.fill("#f4f4f9")
     draw_text("How does the A* Pathfinding Visualizer actually work?", secondaryFont, text_col, SCREEN_WIDTH // 2, 100)
     lines = ['A* is a search algorithm that helps find the shortest path on a grid.', 'It knows roughly where the end goal is, making it faster than other search algorithms.', 'To do this, it needs to be able to calculate the distance from one point to another.']
@@ -349,7 +324,7 @@ def tutorialPage():
     lines3 = ['Now the algorithm works like this:', '1. Start at your position.', '2. Look at all the nearby spots you can move to.', '3. Calculate their F-costs. Pick the spot with the smallest F-cost to move to next.', '4. If two spots have the same F-cost, choose the one that looks closer to the goal. (Whichever one has a lower G-cost)', '5. Keep repeating until you reach the goal. That\'s it!']
     for i in range(len(lines3)):
         draw_text(lines3[i], bodyFont, text_col, SCREEN_WIDTH // 2, 500 + i * lineheight)
-    if exit_button.draw():
+    if exit_button.draw(screen):
         menu_state = "main"
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
