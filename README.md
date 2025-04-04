@@ -17,12 +17,6 @@ pip install pygame
 - Left click again on any object to delete it (or use the clear button to remove all objects).
 - Use the pre-made maze button to look at an example of how the algorithm may solve a maze.
 
-## Troubleshooting
-
-- If an error occurs (e.g. no solution is found or nodes were not placed on the grid):
-  - Clear the grid fully using the red button before running the program again. (If this is not done the program may not run if you click the start button)
-
-
 ## Acknowledgements
 
 This project was created independently, but I referred to some online resources for guidance to better understand underlying concepts:
