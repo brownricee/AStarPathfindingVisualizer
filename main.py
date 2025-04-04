@@ -75,9 +75,14 @@ class AStarSearch(Grid):
     def tie_breaker(self, row1, row2, col1, col2):
         HCost1 = abs(self.endNodeCoordinates[0] - row1) + abs(self.endNodeCoordinates[1] - col1)
         HCost2 = abs(self.endNodeCoordinates[0] - row2) + abs(self.endNodeCoordinates[1] - col2)
+        if HCost1 == HCost2:
+            GCost1 = abs(self.startingNodeCoordinates[0] - row1) + abs(self.startingNodeCoordinates[1] - col1)
+            GCost2 = abs(self.startingNodeCoordinates[0] - row2) + abs(self.startingNodeCoordinates[1] - col2)
+            return GCost1 < GCost2
         # H Cost 1 will be the current smallest node and coordinates, 
-        # And H cost 2 will be whatever the next contender is 
-        return HCost1 < HCost2
+        # And H cost 2 will be whatever the next contender is
+        else: 
+            return HCost1 < HCost2
     def search(self):
         blockSize = 50
         parents = {}
@@ -87,6 +92,7 @@ class AStarSearch(Grid):
             return
         elif self.startingNodeCoordinates == None or self.endNodeCoordinates == None:
             button.show_error_window("You did not place a start/end node on the grid.")
+            resetMaze()
             return
         while len(self.nodesToSearch) != 0:
             smallest_f_cost = 99999
@@ -98,7 +104,7 @@ class AStarSearch(Grid):
                     smallest_f_cost = f_cost
                     smallest_node = self.nodesToSearch[i]
                 elif f_cost == smallest_f_cost:
-                    # Tie breaker will be dependent on the H cost
+                    # Tie breaker will be dependent on the H cost and G Cost
                     if self.tie_breaker(smallest_node[0], self.nodesToSearch[i][0], smallest_node[1], self.nodesToSearch[i][1]):
                         pass
                     else:
@@ -151,6 +157,7 @@ class AStarSearch(Grid):
                     parents[left_node] = smallest_node
         if not solved:
             button.show_error_window("No solution to the maze.")
+            resetMaze()
                
 
 def draw_text(text, font, text_colour, x, y):
@@ -185,6 +192,15 @@ def main_menu():
         pygame.display.update()
 
 nodes = ['S', 'X']
+
+def resetMaze():
+    global gridMaze, nodes, action_executed
+    for i in range(len(gridMaze)):
+        for j in range(len(gridMaze[i])):
+            gridMaze[i][j] = ' '
+    nodes = ['S', 'X']
+    action_executed = False
+
 gridMaze = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
 [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
 [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -227,18 +243,14 @@ def visualizerPage():
     blockSize = 50
     drawGrid(blockSize, gridMaze)
     if start_maze.draw(screen):
-        if not action_executed:
+        if not action_executed or not nodes:
             searchMaze = AStarSearch(gridMaze)
             searchMaze.search()
             action_executed = True
     if exit_button.draw(screen):
         menu_state = "main"
     if clear_maze.draw(screen):
-        for i in range(len(gridMaze)):
-            for j in range(len(gridMaze[i])):
-                gridMaze[i][j] = ' '
-                nodes = ['S', 'X']
-        action_executed = False
+        resetMaze()
     if preset_maze.draw(screen):
         for i in range(len(gridMaze)):
             for j in range(len(gridMaze[i])):
