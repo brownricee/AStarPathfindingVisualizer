@@ -19,6 +19,9 @@ tutorial_img = pygame.image.load('graphics/tutorialbutton.png').convert_alpha()
 start_maze_img = pygame.image.load('graphics/startbutton.png').convert_alpha()
 clear_maze_img = pygame.image.load('graphics/clearbutton.png').convert_alpha()
 preset_maze_img = pygame.image.load('graphics/presetbutton.png').convert_alpha()
+fast_img = pygame.image.load('graphics/fastbutton.png').convert_alpha()
+medium_img = pygame.image.load('graphics/mediumbutton.png').convert_alpha()
+slow_img = pygame.image.load('graphics/slowbutton.png').convert_alpha()
 
 menu_state = "main"
 
@@ -116,7 +119,7 @@ class AStarSearch(Grid):
                 gridMaze[smallest_node[0]][smallest_node[1]] = 'D'
             drawGrid(blockSize, gridMaze)
             pygame.display.update()
-            pygame.time.delay(50)
+            pygame.time.delay(timeDelay)
             self.nodesToSearch.remove(smallest_node)
             self.searchedNodes.append(smallest_node)
             if smallest_node == self.endNodeCoordinates:
@@ -233,15 +236,30 @@ presetMaze = [
 action_executed = False
 
 def visualizerPage():
-    global menu_state, nodes, action_executed
+    global menu_state, nodes, action_executed, timeDelay
     pygame.display.set_caption("A* Pathfinding Visualizer")
     exit_button = button.Button(150, 50, exit_img, 0.6)
     start_maze = button.Button(225, SCREEN_HEIGHT - 50, start_maze_img, 0.6)
     clear_maze = button.Button(500, SCREEN_HEIGHT - 50, clear_maze_img, 0.6)
     preset_maze = button.Button(785, SCREEN_HEIGHT - 50, preset_maze_img, 0.6)
+    fast_button = button.Button(950, 300, fast_img, 0.10)
+    medium_button = button.Button(950, 380, medium_img, 0.10)
+    slow_button = button.Button(950, 460, slow_img, 0.10)
     screen.fill("#f4f4f9")
     blockSize = 50
     drawGrid(blockSize, gridMaze)
+    if fast_button.draw(screen):
+        print('fast button clicked!')
+        timeDelay = 50
+        print(timeDelay)
+    if medium_button.draw(screen):
+        print("medium button clicked!")
+        timeDelay = 100
+        print(timeDelay)
+    if slow_button.draw(screen):
+        print("slow button clicked")
+        timeDelay = 150
+        print(timeDelay)
     if start_maze.draw(screen):
         if not action_executed or not nodes:
             searchMaze = AStarSearch(gridMaze)
