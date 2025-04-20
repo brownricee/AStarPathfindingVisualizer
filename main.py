@@ -119,7 +119,12 @@ class AStarSearch(Grid):
                 gridMaze[smallest_node[0]][smallest_node[1]] = 'D'
             drawGrid(blockSize, gridMaze)
             pygame.display.update()
-            pygame.time.delay(timeDelay)
+            try:
+                pygame.time.delay(timeDelay)
+            except NameError:
+                button.show_error_window("Please select a speed.")
+                resetMaze()
+                break
             self.nodesToSearch.remove(smallest_node)
             self.searchedNodes.append(smallest_node)
             if smallest_node == self.endNodeCoordinates:
@@ -249,17 +254,11 @@ def visualizerPage():
     blockSize = 50
     drawGrid(blockSize, gridMaze)
     if fast_button.draw(screen):
-        print('fast button clicked!')
         timeDelay = 50
-        print(timeDelay)
     if medium_button.draw(screen):
-        print("medium button clicked!")
         timeDelay = 100
-        print(timeDelay)
     if slow_button.draw(screen):
-        print("slow button clicked")
         timeDelay = 150
-        print(timeDelay)
     if start_maze.draw(screen):
         if not action_executed or not nodes:
             searchMaze = AStarSearch(gridMaze)
